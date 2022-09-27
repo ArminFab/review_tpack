@@ -10,8 +10,6 @@ library(gmodels)
 # read data
 data <- rio::import("data\\tpack_review_new_16092022.xlsx")
 
-# deleting the last two rows of the data set
-data <- head(data, -2)
 
 # new variable factor_sample consisting of each sample group type (pre-/in service & teacher educators)
 data <- mutate(data, factor_sample = case_when(
@@ -37,6 +35,11 @@ data <- mutate(data, factor_method = case_when(data$mixed == 1 ~ "mixed",
                                                 data$qualitative == 1 ~"qualitative"))
 factor_method <- as.factor(data$factor_method)
 
+# new variable "factor_years" divided into the ranges 2005 - 2010, 2011 - 2016, 2017- 2020
+data <- mutate(data, factor_years = case_when(data$Year <= 2010 ~ "early",
+                                              data$Year >= 2016 ~ "recent",
+                                              TRUE ~ "middle"))
+
 # DESCRIPTIVE RESULTS...
 #.... regarding countries
 print(table(data$factor_country))
@@ -49,6 +52,10 @@ print(100*(prop.table(table(data$factor_sample))))
 #... regarding method used
 print(table(data$factor_method))
 print(100*(prop.table(table(data$factor_method))))
+
+#... regarding published years
+print(barplot(table(data$Year), xlab = "year", ylab="numbers of interventions"))
+
 
 
 
